@@ -150,7 +150,7 @@ where
             ArgParseError<Word::Error, Status::Error>,
         > = |_args, ctx| {
             let next_word = Self::next(&ctx.board);
-            Ok(Some(next_word.to_string()))
+            Ok(Some(format!("next word is: {}", next_word.to_string())))
         };
         ReplCommandHandlers {
             reset,
