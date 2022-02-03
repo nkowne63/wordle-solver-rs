@@ -93,9 +93,9 @@ impl Board {
                         status_board.insert(WordPair(*word, *answer), status);
                     });
                 let percentage = (i_index as f64 / input_len as f64) * 100.0;
-                let percentage = ((percentage / 5.0).floor() as i64 * 5) as f64;
-                if percentage >= (current + 5.0) {
-                    current = (current + 5.0).max(percentage);
+                let percentage = ((percentage / 10.0).floor() as i64 * 10) as f64;
+                if percentage >= (current + 10.0) {
+                    current = (current + 10.0).max(percentage);
                     println!("board percentage {}%", current);
                 }
             });
@@ -143,9 +143,9 @@ impl Board {
                 });
                 word_avg_info.insert(*word, avg_info);
                 let percentage = (i_index as f64 / input_len as f64) * 100.0;
-                let percentage = ((percentage / 5.0).floor() as i64 * 5) as f64;
-                if percentage >= (current + 5.0) {
-                    current = (current + 5.0).max(percentage);
+                let percentage = ((percentage / 10.0).floor() as i64 * 10) as f64;
+                if percentage >= (current + 10.0) {
+                    current = (current + 10.0).max(percentage);
                     println!("info percentage {}%", current);
                 }
             });

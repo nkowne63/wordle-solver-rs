@@ -29,8 +29,8 @@ pub trait ReplCommandHandlers: ReplFunctions {
     ) -> Result<Option<String>, ReplError> {
         let word_string: String = args.get("word").unwrap().convert()?;
         let status_string: String = args.get("status").unwrap().convert()?;
-        let word: Word = word_string.try_into().unwrap();
-        let status: Status = status_string.try_into().unwrap();
+        let word: Word = word_string.parse().unwrap();
+        let status: Status = status_string.parse().unwrap();
         let board = &mut context.board;
         Self::filter(word, status, board);
         Ok(None)

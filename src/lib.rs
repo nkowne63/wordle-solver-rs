@@ -13,20 +13,6 @@ use words::Canditates;
 
 static CANDITATES: Lazy<Canditates> = Lazy::new(|| Canditates {});
 
-impl TryFrom<String> for Word {
-    type Error = String;
-    fn try_from(s: String) -> Result<Self, Self::Error> {
-        s.parse()
-    }
-}
-
-impl TryFrom<String> for Status {
-    type Error = String;
-    fn try_from(s: String) -> Result<Self, Self::Error> {
-        s.parse()
-    }
-}
-
 pub struct ReplFunctionsStruct {}
 
 impl ReplFunctions for ReplFunctionsStruct {
