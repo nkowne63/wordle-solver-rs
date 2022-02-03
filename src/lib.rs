@@ -1,3 +1,4 @@
-pub mod commands;
-pub mod enums;
-pub mod words;
+mod board;
+mod commands;
+mod enums;
+mod words;
