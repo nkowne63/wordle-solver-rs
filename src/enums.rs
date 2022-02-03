@@ -1,4 +1,4 @@
-use itertools::iproduct;
+use itertools::{iproduct, Itertools};
 use std::str::FromStr;
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug, Hash)]
@@ -29,6 +29,8 @@ enum Alphabet {
     X,
     Y,
     Z,
+    // statusを計算するときだけ現れるやつ
+    Omega,
 }
 
 impl ToString for Alphabet {
@@ -60,6 +62,7 @@ impl ToString for Alphabet {
             Alphabet::X => "X",
             Alphabet::Y => "Y",
             Alphabet::Z => "Z",
+            Alphabet::Omega => "_",
         }
         .to_string()
         .to_lowercase()
@@ -199,14 +202,23 @@ impl Word {
     // https://xcloche.hateblo.jp/entry/2022/01/24/212558
     pub fn to_status(word: &Word, answer: &Word) -> Status {
         let mut status = Status([StatusChar::Gray; 5]);
+        let mut answer = *answer;
         for word_idx in 0..5 {
             if word.0[word_idx] == answer.0[word_idx] {
                 status.0[word_idx] = StatusChar::Green;
+                answer.0[word_idx] = Alphabet::Omega;
             }
         }
         for word_idx in 0..5 {
             if answer.0.contains(&word.0[word_idx]) && status.0[word_idx] == StatusChar::Gray {
                 status.0[word_idx] = StatusChar::Yellow;
+                let pos = answer
+                    .0
+                    .iter()
+                    .find_position(|a| *a == &word.0[word_idx])
+                    .unwrap()
+                    .0;
+                answer.0[pos] = Alphabet::Omega;
             }
         }
         status
@@ -228,6 +240,6 @@ mod tests {
         let word: Word = "alpha".parse().unwrap();
         let answer: Word = "abcde".parse().unwrap();
         let status = Word::to_status(&word, &answer);
-        assert_eq!(status.to_string(), "g___y".to_string());
+        assert_eq!(status.to_string(), "g____".to_string());
     }
 }
