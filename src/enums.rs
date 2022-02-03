@@ -1,6 +1,7 @@
+use itertools::iproduct;
 use std::str::FromStr;
 
-#[derive(PartialEq, Eq, Clone, Copy, Debug)]
+#[derive(PartialEq, Eq, Clone, Copy, Debug, Hash)]
 enum Alphabet {
     A,
     B,
@@ -100,7 +101,7 @@ impl FromStr for Alphabet {
     }
 }
 
-#[derive(PartialEq, Eq, Clone, Copy, Debug)]
+#[derive(PartialEq, Eq, Clone, Copy, Debug, Hash)]
 enum StatusChar {
     Gray,
     Yellow,
@@ -130,7 +131,8 @@ impl ToString for StatusChar {
     }
 }
 
-pub struct Word([Alphabet; 5]);
+#[derive(PartialEq, Eq, Clone, Copy, Debug, Hash)]
+pub(crate) struct Word([Alphabet; 5]);
 
 impl FromStr for Word {
     type Err = String;
@@ -154,7 +156,8 @@ impl ToString for Word {
     }
 }
 
-struct Status([StatusChar; 5]);
+#[derive(PartialEq, Eq, Clone, Copy, Debug, Hash)]
+pub(crate) struct Status([StatusChar; 5]);
 
 impl FromStr for Status {
     type Err = String;
@@ -178,10 +181,23 @@ impl ToString for Status {
     }
 }
 
+impl Status {
+    fn get_status_iter() -> impl Iterator<Item = Status> {
+        iproduct!(
+            [StatusChar::Gray, StatusChar::Yellow, StatusChar::Green],
+            [StatusChar::Gray, StatusChar::Yellow, StatusChar::Green],
+            [StatusChar::Gray, StatusChar::Yellow, StatusChar::Green],
+            [StatusChar::Gray, StatusChar::Yellow, StatusChar::Green],
+            [StatusChar::Gray, StatusChar::Yellow, StatusChar::Green]
+        )
+        .map(|(a, b, c, d, e)| Status([a, b, c, d, e]))
+    }
+}
+
 impl Word {
     // 考えるのが面倒なのでこれのpythonのコードで
     // https://xcloche.hateblo.jp/entry/2022/01/24/212558
-    fn to_status(word: Word, answer: Word) -> Status {
+    pub(crate) fn to_status(word: &Word, answer: &Word) -> Status {
         let mut status = Status([StatusChar::Gray; 5]);
         for word_idx in 0..5 {
             if word.0[word_idx] == answer.0[word_idx] {
@@ -204,14 +220,14 @@ mod tests {
     fn word() {
         let word: Word = "acegi".parse().unwrap();
         let answer: Word = "abcde".parse().unwrap();
-        let status = Word::to_status(word, answer);
+        let status = Word::to_status(&word, &answer);
         assert_eq!(status.to_string(), "gyy__".to_string());
     }
     #[test]
     fn duplicated() {
         let word: Word = "alpha".parse().unwrap();
         let answer: Word = "abcde".parse().unwrap();
-        let status = Word::to_status(word, answer);
+        let status = Word::to_status(&word, &answer);
         assert_eq!(status.to_string(), "g___y".to_string());
     }
 }
