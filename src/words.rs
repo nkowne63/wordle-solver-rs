@@ -268,7 +268,7 @@ impl Canditates {
         .collect()
     }
     fn get_all_words(&self) -> Vec<Word> {
-        let mut Ta: Vec<Word> = vec![
+        let mut ta: Vec<Word> = vec![
             "aahed", "aalii", "aargh", "aarti", "abaca", "abaci", "abacs", "abaft", "abaka",
             "abamp", "aband", "abash", "abask", "abaya", "abbas", "abbed", "abbes", "abcee",
             "abeam", "abear", "abele", "abers", "abets", "abies", "abler", "ables", "ablet",
@@ -1458,8 +1458,8 @@ impl Canditates {
         .iter()
         .map(|s| s.parse().unwrap())
         .collect();
-        let mut La = self.get_canditates();
-        La.append(&mut Ta);
-        La
+        let mut la = self.get_canditates();
+        la.append(&mut ta);
+        la
     }
 }
