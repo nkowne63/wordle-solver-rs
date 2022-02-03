@@ -1,5 +1,5 @@
 mod board;
-mod commands;
+pub mod commands;
 mod enums;
 mod words;
 

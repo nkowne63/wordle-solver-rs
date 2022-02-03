@@ -132,7 +132,7 @@ impl ToString for StatusChar {
 }
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug, Hash)]
-pub(crate) struct Word([Alphabet; 5]);
+pub struct Word([Alphabet; 5]);
 
 impl FromStr for Word {
     type Err = String;
@@ -157,7 +157,7 @@ impl ToString for Word {
 }
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug, Hash)]
-pub(crate) struct Status([StatusChar; 5]);
+pub struct Status([StatusChar; 5]);
 
 impl FromStr for Status {
     type Err = String;
@@ -182,7 +182,7 @@ impl ToString for Status {
 }
 
 impl Status {
-    pub(crate) fn get_status_iter() -> impl Iterator<Item = Status> {
+    pub fn get_status_iter() -> impl Iterator<Item = Status> {
         iproduct!(
             [StatusChar::Gray, StatusChar::Yellow, StatusChar::Green],
             [StatusChar::Gray, StatusChar::Yellow, StatusChar::Green],
@@ -197,7 +197,7 @@ impl Status {
 impl Word {
     // 考えるのが面倒なのでこれのpythonのコードで
     // https://xcloche.hateblo.jp/entry/2022/01/24/212558
-    pub(crate) fn to_status(word: &Word, answer: &Word) -> Status {
+    pub fn to_status(word: &Word, answer: &Word) -> Status {
         let mut status = Status([StatusChar::Gray; 5]);
         for word_idx in 0..5 {
             if word.0[word_idx] == answer.0[word_idx] {

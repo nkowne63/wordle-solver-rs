@@ -7,7 +7,7 @@ struct WordPair(Word, Word);
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 struct WordStatusPair(Word, Status);
 
-pub(crate) struct Board {
+pub struct Board {
     status_board: HashMap<WordPair, Status>,
     remaining_canditates: Vec<Word>,
     input_canditates: Vec<Word>,
@@ -16,7 +16,7 @@ pub(crate) struct Board {
 }
 
 impl Board {
-    pub(crate) fn new(canditates: Vec<Word>, inputs: Vec<Word>) -> Board {
+    pub fn new(canditates: Vec<Word>, inputs: Vec<Word>) -> Board {
         let status_board = HashMap::new();
         let word_color_grouping = HashMap::new();
         let word_avg_info = HashMap::new();
@@ -28,7 +28,7 @@ impl Board {
             word_avg_info,
         }
     }
-    pub(crate) fn filter(&mut self, word: &Word, status: &Status) {
+    pub fn filter(&mut self, word: &Word, status: &Status) {
         let &mut Board {
             status_board: _,
             ref mut remaining_canditates,
@@ -43,7 +43,7 @@ impl Board {
             .collect();
         *remaining_canditates = remaining;
     }
-    pub(crate) fn compute_board(&mut self) {
+    pub fn compute_board(&mut self) {
         let &mut Board {
             ref mut remaining_canditates,
             ref mut input_canditates,
@@ -59,7 +59,7 @@ impl Board {
             });
         });
     }
-    pub(crate) fn compute_info(&mut self) {
+    pub fn compute_info(&mut self) {
         let &mut Board {
             ref mut remaining_canditates,
             ref mut input_canditates,
@@ -93,7 +93,7 @@ impl Board {
             word_avg_info.insert(*word, avg_info);
         });
     }
-    pub(crate) fn compute_next_word_info(&self) -> (Word, f64) {
+    pub fn compute_next_word_info(&self) -> (Word, f64) {
         let &Board {
             remaining_canditates: _,
             input_canditates: _,

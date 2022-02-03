@@ -5,17 +5,17 @@ use crate::{
 use repl_rs::{Command, Convert, Error as ReplError, Parameter, Repl, Value};
 use std::collections::HashMap;
 
-pub(crate) struct ReplContext {
+pub struct ReplContext {
     board: Board,
 }
 
-pub(crate) trait ReplFunctions {
+pub trait ReplFunctions {
     fn reset() -> Board;
     fn filter(word: Word, status: Status, board: &mut Board);
     fn next(board: &mut Board) -> Word;
 }
 
-pub(crate) trait ReplCommandHandlers: ReplFunctions {
+pub trait ReplCommandHandlers: ReplFunctions {
     fn reset_handler(
         _args: HashMap<String, Value>,
         context: &mut ReplContext,
