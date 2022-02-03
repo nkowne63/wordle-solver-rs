@@ -52,7 +52,7 @@ pub trait ReplCommandHandlers: ReplFunctions {
             .with_help("Filter wordle canditates of solutions")
             .with_parameter(Parameter::new("word").set_required(true).unwrap())
             .unwrap()
-            .with_parameter(Parameter::new("state").set_required(true).unwrap())
+            .with_parameter(Parameter::new("status").set_required(true).unwrap())
             .unwrap();
         let ctx = ReplContext {
             board: Self::reset(),

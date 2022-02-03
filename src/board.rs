@@ -46,6 +46,22 @@ impl Board {
         let after_len = remaining.len();
         *remaining_canditates = remaining;
         let end = start.elapsed();
+        if remaining_canditates.len() > 2 {
+            println!(
+                "first three: {}, {}, {}",
+                remaining_canditates[0].to_string(),
+                remaining_canditates[1].to_string(),
+                remaining_canditates[2].to_string()
+            );
+        } else {
+            println!(
+                "remaining: {:?}",
+                remaining_canditates
+                    .iter()
+                    .map(|w| w.to_string())
+                    .collect::<Vec<String>>()
+            );
+        }
         println!("filter: {} -> {}", before_len, after_len);
         println!(
             "gained information: {}",
