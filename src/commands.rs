@@ -5,7 +5,7 @@ use crate::{
 use repl_rs::{Command, Convert, Error as ReplError, Parameter, Repl, Value};
 use std::collections::HashMap;
 
-struct ReplContext {
+pub(crate) struct ReplContext {
     board: Board,
 }
 
@@ -15,7 +15,7 @@ pub(crate) trait ReplFunctions {
     fn next(board: &mut Board) -> Word;
 }
 
-trait ReplCommandHandlers: ReplFunctions {
+pub(crate) trait ReplCommandHandlers: ReplFunctions {
     fn reset_handler(
         _args: HashMap<String, Value>,
         context: &mut ReplContext,

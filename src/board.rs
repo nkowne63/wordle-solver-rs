@@ -28,7 +28,7 @@ impl Board {
             word_avg_info,
         }
     }
-    fn filter(&mut self, word: &Word, status: &Status) {
+    pub(crate) fn filter(&mut self, word: &Word, status: &Status) {
         let &mut Board {
             status_board: _,
             ref mut remaining_canditates,
@@ -43,7 +43,7 @@ impl Board {
             .collect();
         *remaining_canditates = remaining;
     }
-    fn compute_board(&mut self) {
+    pub(crate) fn compute_board(&mut self) {
         let &mut Board {
             ref mut remaining_canditates,
             ref mut input_canditates,
@@ -59,7 +59,7 @@ impl Board {
             });
         });
     }
-    fn compute_info(&mut self) {
+    pub(crate) fn compute_info(&mut self) {
         let &mut Board {
             ref mut remaining_canditates,
             ref mut input_canditates,
@@ -93,7 +93,7 @@ impl Board {
             word_avg_info.insert(*word, avg_info);
         });
     }
-    fn compute_next_word_info(&self) -> (Word, f64) {
+    pub(crate) fn compute_next_word_info(&self) -> (Word, f64) {
         let &Board {
             remaining_canditates: _,
             input_canditates: _,

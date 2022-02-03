@@ -1,8 +1,8 @@
 use crate::enums::*;
-struct Canditates {}
+pub(crate) struct Canditates {}
 
 impl Canditates {
-    fn get_canditates(&self) -> Vec<Word> {
+    pub(crate) fn get_canditates(&self) -> Vec<Word> {
         vec![
             "cigar", "rebut", "sissy", "humph", "awake", "blush", "focal", "evade", "naval",
             "serve", "heath", "dwarf", "model", "karma", "stink", "grade", "quiet", "bench",
@@ -267,7 +267,7 @@ impl Canditates {
         .map(|s| s.parse().unwrap())
         .collect()
     }
-    fn get_all_words(&self) -> Vec<Word> {
+    pub(crate) fn get_all_words(&self) -> Vec<Word> {
         let mut ta: Vec<Word> = vec![
             "aahed", "aalii", "aargh", "aarti", "abaca", "abaci", "abacs", "abaft", "abaka",
             "abamp", "aband", "abash", "abask", "abaya", "abbas", "abbed", "abbes", "abcee",
