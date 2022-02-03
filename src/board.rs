@@ -111,7 +111,7 @@ impl Board {
             ref mut word_color_grouping,
             ref mut word_avg_info,
         } = self;
-        let len_of_input_canditates = input_canditates.len() as u32;
+        let len_of_remaining_canditates = remaining_canditates.len() as u32;
         let input_len = input_canditates.len() as u32;
         let mut current = 0f64;
         input_canditates
@@ -136,7 +136,7 @@ impl Board {
                     if count == 0 {
                         return;
                     }
-                    let probablity = count as f64 / len_of_input_canditates as f64;
+                    let probablity = count as f64 / len_of_remaining_canditates as f64;
                     avg_info += -probablity * probablity.log2();
                 });
                 word_avg_info.insert(*word, avg_info);
