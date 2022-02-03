@@ -130,7 +130,7 @@ impl ToString for StatusChar {
     }
 }
 
-struct Word([Alphabet; 5]);
+pub struct Word([Alphabet; 5]);
 
 impl FromStr for Word {
     type Err = String;
