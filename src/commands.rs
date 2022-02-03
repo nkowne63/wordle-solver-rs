@@ -9,8 +9,7 @@ struct ReplContext {
     board: Board,
 }
 
-trait ReplFunctions {
-    fn new_board(words: Vec<Word>, answers: Vec<Word>) -> Board;
+pub(crate) trait ReplFunctions {
     fn reset() -> Board;
     fn filter(word: Word, status: Status, board: &mut Board);
     fn next(board: &mut Board) -> Word;
@@ -44,7 +43,7 @@ trait ReplCommandHandlers: ReplFunctions {
         let word = Self::next(board);
         Ok(Some(word.to_string()))
     }
-    fn into_repl(word: Vec<Word>, inputs: Vec<Word>) -> Repl<ReplContext, ReplError> {
+    fn into_repl() -> Repl<ReplContext, ReplError> {
         let reset_command =
             Command::new("reset", Self::reset_handler).with_help("Reset wordle solver state");
         let next_command =
@@ -56,7 +55,7 @@ trait ReplCommandHandlers: ReplFunctions {
             .with_parameter(Parameter::new("state").set_required(true).unwrap())
             .unwrap();
         let ctx = ReplContext {
-            board: Self::new_board(word, inputs),
+            board: Self::reset(),
         };
         Repl::new(ctx)
             .with_name("wordle-solver")

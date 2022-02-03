@@ -7,7 +7,7 @@ struct WordPair(Word, Word);
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 struct WordStatusPair(Word, Status);
 
-struct Board {
+pub(crate) struct Board {
     status_board: HashMap<WordPair, Status>,
     remaining_canditates: Vec<Word>,
     input_canditates: Vec<Word>,
@@ -16,7 +16,7 @@ struct Board {
 }
 
 impl Board {
-    fn new(canditates: Vec<Word>, inputs: Vec<Word>) -> Board {
+    pub(crate) fn new(canditates: Vec<Word>, inputs: Vec<Word>) -> Board {
         let status_board = HashMap::new();
         let word_color_grouping = HashMap::new();
         let word_avg_info = HashMap::new();
