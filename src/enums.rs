@@ -182,7 +182,7 @@ impl ToString for Status {
 }
 
 impl Status {
-    fn get_status_iter() -> impl Iterator<Item = Status> {
+    pub(crate) fn get_status_iter() -> impl Iterator<Item = Status> {
         iproduct!(
             [StatusChar::Gray, StatusChar::Yellow, StatusChar::Green],
             [StatusChar::Gray, StatusChar::Yellow, StatusChar::Green],
