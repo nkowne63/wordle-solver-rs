@@ -114,6 +114,8 @@ impl Board {
         let len_of_remaining_canditates = remaining_canditates.len() as u32;
         let input_len = input_canditates.len() as u32;
         let mut current = 0f64;
+        word_color_grouping.clear();
+        word_avg_info.clear();
         input_canditates
             .iter()
             .enumerate()
