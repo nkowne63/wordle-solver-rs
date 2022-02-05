@@ -9,7 +9,7 @@ struct WordStatusPair(Word, Status);
 
 pub struct Board {
     status_board: HashMap<WordPair, Status>,
-    remaining_canditates: Vec<Word>,
+    pub remaining_canditates: Vec<Word>,
     input_canditates: Vec<Word>,
     word_color_grouping: HashMap<WordStatusPair, u32>,
     word_avg_info: HashMap<Word, f64>,
