@@ -1,23 +1,23 @@
 use crate::{
     enums::{Status, Word},
-    tactics::{avg_info_max::Board, solver::Solver},
+    tactics::solver::Solver,
     CANDITATES,
 };
 use repl_rs::{Command, Convert, Error as ReplError, Parameter, Repl, Value};
 use std::collections::HashMap;
 
-pub struct ReplContext {
-    board: Board,
+pub struct ReplContext<T: Solver> {
+    board: T,
 }
 
-pub trait ReplFunctions: Solver {
-    fn reset() -> Board {
-        Board::new(CANDITATES.get_canditates(), CANDITATES.get_all_words())
+pub trait ReplFunctions: Solver + Sized {
+    fn reset() -> Self {
+        Self::new(CANDITATES.get_canditates(), CANDITATES.get_all_words())
     }
-    fn filter(word: Word, status: Status, board: &mut Board) {
+    fn filter(word: Word, status: Status, board: &mut Self) {
         board.filter(&word, &status);
     }
-    fn next(board: &mut Board) -> Word {
+    fn next(board: &mut Self) -> Word {
         board.next()
     }
 }
@@ -25,14 +25,14 @@ pub trait ReplFunctions: Solver {
 pub trait ReplCommandHandlers: ReplFunctions {
     fn reset_handler(
         _args: HashMap<String, Value>,
-        context: &mut ReplContext,
+        context: &mut ReplContext<Self>,
     ) -> Result<Option<String>, ReplError> {
         context.board = Self::reset();
         Ok(None)
     }
     fn filter_handler(
         args: HashMap<String, Value>,
-        context: &mut ReplContext,
+        context: &mut ReplContext<Self>,
     ) -> Result<Option<String>, ReplError> {
         let word_string: String = args.get("word").unwrap().convert()?;
         let status_string: String = args.get("status").unwrap().convert()?;
@@ -44,13 +44,13 @@ pub trait ReplCommandHandlers: ReplFunctions {
     }
     fn next_handler(
         _args: HashMap<String, Value>,
-        context: &mut ReplContext,
+        context: &mut ReplContext<Self>,
     ) -> Result<Option<String>, ReplError> {
         let board = &mut context.board;
         let word = <Self as ReplFunctions>::next(board);
         Ok(Some(word.to_string()))
     }
-    fn into_repl() -> Repl<ReplContext, ReplError> {
+    fn into_repl() -> Repl<ReplContext<Self>, ReplError> {
         let reset_command =
             Command::new("reset", Self::reset_handler).with_help("Reset wordle solver state");
         let next_command =
