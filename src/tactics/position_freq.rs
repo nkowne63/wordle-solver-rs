@@ -1,5 +1,7 @@
+use itertools::iproduct;
+
 use crate::commands::{ReplCommandHandlers, ReplFunctions};
-use crate::enums::{Status, Word};
+use crate::enums::{Alphabet, Status, Word};
 use crate::tactics::solver::Solver;
 use std::{collections::HashMap, time::Instant};
 
@@ -54,14 +56,64 @@ impl Solver for Board {
         println!("filter time: {:?}", end);
     }
     fn next(&self) -> Word {
-        let all_start = Instant::now();
         let start = Instant::now();
         let &Board {
             ref remaining_canditates,
             ref input_canditates,
         } = self;
 
-        todo!()
+        // construct char_position_count map
+        let mut char_position_count: HashMap<(Alphabet, usize), i32> = HashMap::new();
+        iproduct!(remaining_canditates.iter(), 0..5).for_each(|(word, index)| {
+            let target_char = word.0[index];
+            if let Some(value) = char_position_count.get_mut(&(target_char, index)) {
+                *value += 1;
+            } else {
+                char_position_count.insert((target_char, index), 1);
+            }
+        });
+
+        // search and calculate max info
+        let mut current_max_info = -1f64;
+        let mut current_max_word: Word = "qqqqq".parse().unwrap();
+        input_canditates.iter().for_each(|word| {
+            let mut info = 0f64;
+            word.0.iter().enumerate().for_each(|(index, alphabet)| {
+                // 各文字ごとに情報量を計算する
+                // greenの確率
+                let probablity_green = *char_position_count.get(&(*alphabet, index)).unwrap_or(&0)
+                    as f64
+                    / remaining_canditates.len() as f64;
+                // grayの確率
+                let probablity_gray = (0..5)
+                    .map(|index| {
+                        (remaining_canditates.len() as i32
+                            - *char_position_count.get(&(*alphabet, index)).unwrap_or(&0))
+                            as f64
+                    })
+                    .reduce(|prev, current| prev * current / remaining_canditates.len() as f64)
+                    .unwrap_or(0.0);
+                // yellowの確率
+                let probablity_yellow = 1f64 - probablity_green - probablity_gray;
+                info += vec![probablity_green, probablity_gray, probablity_yellow]
+                    .iter()
+                    .filter(|&&p| p != 0.0)
+                    .map(|probablity| -probablity * probablity.log2())
+                    .sum::<f64>();
+            });
+            // infoが最大だったら更新
+            if info > current_max_info {
+                current_max_info = info;
+                current_max_word = *word;
+            }
+        });
+
+        let end = start.elapsed();
+        println!("quasi info: {:?}", current_max_info);
+        println!("next: {:?}", current_max_word);
+        println!("next time: {:?}", end);
+
+        current_max_word
     }
 }
 
@@ -69,20 +121,20 @@ impl ReplFunctions for Board {}
 impl ReplCommandHandlers for Board {}
 
 #[cfg(test)]
-mod bench {
+mod tests {
     use super::*;
     use crate::enums::Word;
     use crate::tactics::solver::Solver;
     use crate::CANDITATES;
     #[test]
     #[ignore]
-    fn get_maximum() {
+    fn freq_get_maximum() {
         let mut board = Board::reset();
         <Board as ReplFunctions>::next(&mut board);
     }
     #[test]
     #[ignore]
-    fn get_avg_count() {
+    fn freq_get_avg_count() {
         let best_first = "soare";
         let all_answers = CANDITATES.get_canditates();
         let mut average_count = 0;
