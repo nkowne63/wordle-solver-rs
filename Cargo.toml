@@ -1,5 +1,7 @@
 [package]
-name = "wordle-solver-rs"
+name = "nkowne63-wordle-solver-rs-01"
+description = "wordle solver by the nkowne63"
+licence = "MIT"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,3 +11,8 @@ edition = "2021"
 repl-rs = "0.2.6"
 itertools = "0.10.3"
 once_cell = "1.9.0"
+
+[[bin]]
+# bin.name must be "wordle-solver"
+name = "wordle-solver"
+path = "src/main.rs"
