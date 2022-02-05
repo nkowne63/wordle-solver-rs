@@ -26,11 +26,10 @@ impl ReplFunctions for ReplFunctionsStruct {
 
     fn next(board: &mut Board) -> Word {
         let start = Instant::now();
-        board.compute_board();
-        board.compute_info();
+        let next_word = board.compute_next_word_info().0;
         let end = start.elapsed();
         println!("compute next time: {:?}", end);
-        board.compute_next_word_info().0
+        next_word
     }
 }
 

@@ -69,7 +69,7 @@ impl Board {
         );
         println!("filter time: {:?}", end);
     }
-    pub fn compute_board(&mut self) {
+    pub fn compute_next_word_info(&mut self) -> (Word, f64) {
         let start = Instant::now();
         let &mut Board {
             ref mut remaining_canditates,
@@ -101,8 +101,6 @@ impl Board {
             });
         let end = start.elapsed();
         println!("board time: {:?}", end);
-    }
-    pub fn compute_info(&mut self) {
         let start = Instant::now();
         let &mut Board {
             ref mut remaining_canditates,
@@ -151,10 +149,8 @@ impl Board {
             });
         let end = start.elapsed();
         println!("info time: {:?}", end);
-    }
-    pub fn compute_next_word_info(&self) -> (Word, f64) {
         let start = Instant::now();
-        let &Board {
+        let &mut Board {
             remaining_canditates: _,
             input_canditates: _,
             status_board: _,
@@ -203,8 +199,6 @@ mod tests {
                 .map(|s| s.parse().unwrap())
                 .collect(),
         );
-        board.compute_board();
-        board.compute_info();
         let (next, info) = board.compute_next_word_info();
         assert_eq!(next, "afkpz".parse().unwrap());
         assert_eq!(info, 2f64);
