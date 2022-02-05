@@ -1,3 +1,3 @@
 fn main() {
-    wordle_solver_rs::repls::position_freq();
+    nkowne63_wordle_solver_rs_01::repls::position_freq();
 }

@@ -105,7 +105,7 @@ impl FromStr for Alphabet {
 }
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug, Hash)]
-enum StatusChar {
+pub enum StatusChar {
     Gray,
     Yellow,
     Green,
@@ -160,7 +160,7 @@ impl ToString for Word {
 }
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug, Hash)]
-pub struct Status([StatusChar; 5]);
+pub struct Status(pub [StatusChar; 5]);
 
 impl FromStr for Status {
     type Err = String;

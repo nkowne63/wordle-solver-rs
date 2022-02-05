@@ -1,5 +1,6 @@
 mod commands;
 mod enums;
+mod leko_competition;
 pub mod repls;
 mod tactics;
 mod words;
