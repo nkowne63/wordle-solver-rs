@@ -1,5 +1,6 @@
 use crate::commands::{ReplCommandHandlers, ReplFunctions};
 use crate::enums::{Status, Word};
+use crate::get_show_console;
 use crate::tactics::solver::Solver;
 use std::{collections::HashMap, time::Instant};
 
@@ -36,28 +37,30 @@ impl Solver for Board {
         let after_len = remaining.len();
         *remaining_canditates = remaining;
         let end = start.elapsed();
-        if remaining_canditates.len() > 2 {
+        if get_show_console() {
+            if remaining_canditates.len() > 2 {
+                println!(
+                    "first three: {}, {}, {}",
+                    remaining_canditates[0].to_string(),
+                    remaining_canditates[1].to_string(),
+                    remaining_canditates[2].to_string()
+                );
+            } else {
+                println!(
+                    "remaining: {:?}",
+                    remaining_canditates
+                        .iter()
+                        .map(|w| w.to_string())
+                        .collect::<Vec<String>>()
+                );
+            }
+            println!("filter: {} -> {}", before_len, after_len);
             println!(
-                "first three: {}, {}, {}",
-                remaining_canditates[0].to_string(),
-                remaining_canditates[1].to_string(),
-                remaining_canditates[2].to_string()
+                "gained information: {}",
+                (before_len as f64 / after_len as f64).log2()
             );
-        } else {
-            println!(
-                "remaining: {:?}",
-                remaining_canditates
-                    .iter()
-                    .map(|w| w.to_string())
-                    .collect::<Vec<String>>()
-            );
+            println!("filter time: {:?}", end);
         }
-        println!("filter: {} -> {}", before_len, after_len);
-        println!(
-            "gained information: {}",
-            (before_len as f64 / after_len as f64).log2()
-        );
-        println!("filter time: {:?}", end);
     }
     fn next(&self) -> Word {
         let all_start = Instant::now();
@@ -81,15 +84,19 @@ impl Solver for Board {
                         let status = Word::to_status(word, answer);
                         status_board.insert(WordPair(*word, *answer), status);
                     });
-                let percentage = (i_index as f64 / input_len as f64) * 100.0;
-                let percentage = ((percentage / 10.0).floor() as i64 * 10) as f64;
-                if percentage >= (current + 10.0) {
-                    current = (current + 10.0).max(percentage);
-                    println!("board percentage {}%", current);
+                if get_show_console() {
+                    let percentage = (i_index as f64 / input_len as f64) * 100.0;
+                    let percentage = ((percentage / 10.0).floor() as i64 * 10) as f64;
+                    if percentage >= (current + 10.0) {
+                        current = (current + 10.0).max(percentage);
+                        println!("board percentage {}%", current);
+                    }
                 }
             });
         let end = start.elapsed();
-        println!("board time: {:?}", end);
+        if get_show_console() {
+            println!("board time: {:?}", end);
+        }
         // construct color groping and word_avg_info
         let start = Instant::now();
         let len_of_remaining_canditates = remaining_canditates.len() as u32;
@@ -123,27 +130,33 @@ impl Solver for Board {
                     avg_info += -probablity * probablity.log2();
                 });
                 word_avg_info.insert(*word, avg_info);
-                let percentage = (i_index as f64 / input_len as f64) * 100.0;
-                let percentage = ((percentage / 10.0).floor() as i64 * 10) as f64;
-                if percentage >= (current + 10.0) {
-                    current = (current + 10.0).max(percentage);
-                    println!("info percentage {}%", current);
+                if get_show_console() {
+                    let percentage = (i_index as f64 / input_len as f64) * 100.0;
+                    let percentage = ((percentage / 10.0).floor() as i64 * 10) as f64;
+                    if percentage >= (current + 10.0) {
+                        current = (current + 10.0).max(percentage);
+                        println!("info percentage {}%", current);
+                    }
                 }
             });
-        let end = start.elapsed();
-        println!("info time: {:?}", end);
+        if get_show_console() {
+            let end = start.elapsed();
+            println!("info time: {:?}", end);
+        }
         // search next word
         let start = Instant::now();
         let (word, info) = word_avg_info
             .iter()
             .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
             .unwrap();
-        let end = start.elapsed();
-        let all_end = all_start.elapsed();
-        println!("search time: {:?}", end);
-        println!("next word time: {:?}", all_end);
-        println!("next word: {}", word.to_string());
-        println!("next word info: {}", info);
+        if get_show_console() {
+            let end = start.elapsed();
+            let all_end = all_start.elapsed();
+            println!("search time: {:?}", end);
+            println!("next word time: {:?}", all_end);
+            println!("next word: {}", word.to_string());
+            println!("next word info: {}", info);
+        }
         *word
     }
 }
@@ -153,9 +166,12 @@ impl ReplCommandHandlers for Board {}
 
 #[cfg(test)]
 mod tests {
+    use crate::set_show_console;
+
     use super::*;
     #[test]
     fn filter() {
+        set_show_console(true);
         let mut board = Board::new(
             vec!["abcde", "fghij", "klmno", "pqrst"]
                 .iter()
@@ -171,6 +187,7 @@ mod tests {
     }
     #[test]
     fn info() {
+        set_show_console(true);
         let board = Board::new(
             vec!["abcde", "fghij", "klmno", "pqrst"]
                 .iter()
@@ -204,7 +221,9 @@ mod bench {
         let best_first = "soare";
         let all_answers = CANDITATES.get_canditates();
         let mut average_count = 0;
-        all_answers.iter().for_each(|answer| {
+        let answer_len = all_answers.len();
+        let mut current = 0f64;
+        all_answers.iter().enumerate().for_each(|(a_idx, answer)| {
             let mut board = Board::reset();
             let first_word: Word = best_first.parse().unwrap();
             let first_status = Word::to_status(&first_word, answer);
@@ -220,6 +239,12 @@ mod bench {
                 let status = Word::to_status(&next_word, answer);
                 board.filter(&next_word, &status);
                 average_count += 1;
+            }
+            let percentage = (a_idx as f64 / answer_len as f64) * 100.0;
+            let percentage = ((percentage / 5.0).floor() as i64 * 5) as f64;
+            if percentage >= (current + 5.0) {
+                current = (current + 5.0).max(percentage);
+                println!("board percentage {}%", current);
             }
         });
         let average_count = average_count as f64 / all_answers.len() as f64;

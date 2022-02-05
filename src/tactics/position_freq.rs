@@ -2,8 +2,8 @@ use itertools::{iproduct, Itertools};
 
 use crate::commands::{ReplCommandHandlers, ReplFunctions};
 use crate::enums::{Alphabet, Status, Word};
+use crate::get_show_console;
 use crate::tactics::solver::Solver;
-use crate::SHOW_CONSOLE;
 use std::{collections::HashMap, time::Instant};
 
 pub struct Board {
@@ -33,8 +33,7 @@ impl Solver for Board {
         let after_len = remaining.len();
         *remaining_canditates = remaining;
         let end = start.elapsed();
-        let show_console = *SHOW_CONSOLE.lock().unwrap();
-        if show_console {
+        if get_show_console() {
             if remaining_canditates.len() > 2 {
                 println!(
                     "first three: {}, {}, {}",
@@ -119,8 +118,7 @@ impl Solver for Board {
         });
 
         let end = start.elapsed();
-        let show_console = *SHOW_CONSOLE.lock().unwrap();
-        if show_console {
+        if get_show_console() {
             println!("quasi info: {:?}", current_max_info);
             println!("next: {:?}", current_max_word.to_string());
             println!("next time: {:?}", end);

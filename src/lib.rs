@@ -1,6 +1,7 @@
-pub mod commands;
+mod commands;
 mod enums;
-pub mod tactics;
+pub mod repls;
+mod tactics;
 mod words;
 
 use crate::words::Canditates;
@@ -10,4 +11,10 @@ use std::sync::{Arc, Mutex};
 pub static CANDITATES: Lazy<Canditates> = Lazy::new(|| Canditates {});
 
 #[allow(clippy::mutex_atomic)]
-pub static SHOW_CONSOLE: Lazy<Arc<Mutex<bool>>> = Lazy::new(|| Arc::new(Mutex::new(false)));
+static SHOW_CONSOLE: Lazy<Arc<Mutex<bool>>> = Lazy::new(|| Arc::new(Mutex::new(false)));
+pub fn set_show_console(show: bool) {
+    *SHOW_CONSOLE.lock().unwrap() = show;
+}
+pub fn get_show_console() -> bool {
+    *SHOW_CONSOLE.lock().unwrap()
+}
