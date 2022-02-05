@@ -2,7 +2,7 @@ use itertools::{iproduct, Itertools};
 use std::str::FromStr;
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug, Hash)]
-enum Alphabet {
+pub enum Alphabet {
     A,
     B,
     C,
@@ -135,7 +135,7 @@ impl ToString for StatusChar {
 }
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug, Hash)]
-pub struct Word([Alphabet; 5]);
+pub struct Word(pub [Alphabet; 5]);
 
 impl FromStr for Word {
     type Err = String;
