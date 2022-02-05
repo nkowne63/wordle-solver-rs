@@ -1,6 +1,7 @@
 use crate::{
     enums::{Status, Word},
-    tactics::avg_info_max::Board,
+    tactics::{avg_info_max::Board, solver::Solver},
+    CANDITATES,
 };
 use repl_rs::{Command, Convert, Error as ReplError, Parameter, Repl, Value};
 use std::collections::HashMap;
@@ -9,10 +10,16 @@ pub struct ReplContext {
     board: Board,
 }
 
-pub trait ReplFunctions {
-    fn reset() -> Board;
-    fn filter(word: Word, status: Status, board: &mut Board);
-    fn next(board: &mut Board) -> Word;
+pub trait ReplFunctions: Solver {
+    fn reset() -> Board {
+        Board::new(CANDITATES.get_canditates(), CANDITATES.get_all_words())
+    }
+    fn filter(word: Word, status: Status, board: &mut Board) {
+        board.filter(&word, &status);
+    }
+    fn next(board: &mut Board) -> Word {
+        board.next()
+    }
 }
 
 pub trait ReplCommandHandlers: ReplFunctions {
@@ -32,7 +39,7 @@ pub trait ReplCommandHandlers: ReplFunctions {
         let word: Word = word_string.parse().unwrap();
         let status: Status = status_string.parse().unwrap();
         let board = &mut context.board;
-        Self::filter(word, status, board);
+        <Self as ReplFunctions>::filter(word, status, board);
         Ok(None)
     }
     fn next_handler(
@@ -40,7 +47,7 @@ pub trait ReplCommandHandlers: ReplFunctions {
         context: &mut ReplContext,
     ) -> Result<Option<String>, ReplError> {
         let board = &mut context.board;
-        let word = Self::next(board);
+        let word = <Self as ReplFunctions>::next(board);
         Ok(Some(word.to_string()))
     }
     fn into_repl() -> Repl<ReplContext, ReplError> {

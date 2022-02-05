@@ -1,4 +1,6 @@
+use crate::commands::{ReplCommandHandlers, ReplFunctions};
 use crate::enums::{Status, Word};
+use crate::tactics::solver::Solver;
 use std::{collections::HashMap, time::Instant};
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
@@ -12,14 +14,14 @@ pub struct Board {
     input_canditates: Vec<Word>,
 }
 
-impl Board {
-    pub fn new(canditates: Vec<Word>, inputs: Vec<Word>) -> Board {
+impl Solver for Board {
+    fn new(canditates: Vec<Word>, inputs: Vec<Word>) -> Board {
         Board {
             remaining_canditates: canditates,
             input_canditates: inputs,
         }
     }
-    pub fn filter(&mut self, word: &Word, status: &Status) {
+    fn filter(&mut self, word: &Word, status: &Status) {
         let start = Instant::now();
         let &mut Board {
             ref mut remaining_canditates,
@@ -57,7 +59,8 @@ impl Board {
         );
         println!("filter time: {:?}", end);
     }
-    pub fn compute_next_word_info(&self) -> (Word, f64) {
+    fn next(&self) -> Word {
+        let all_start = Instant::now();
         let start = Instant::now();
         let &Board {
             ref remaining_canditates,
@@ -136,12 +139,17 @@ impl Board {
             .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
             .unwrap();
         let end = start.elapsed();
+        let all_end = all_start.elapsed();
         println!("search time: {:?}", end);
+        println!("next word time: {:?}", all_end);
         println!("next word: {}", word.to_string());
         println!("next word info: {}", info);
-        (*word, *info)
+        *word
     }
 }
+
+impl ReplFunctions for Board {}
+impl ReplCommandHandlers for Board {}
 
 #[cfg(test)]
 mod tests {
@@ -173,8 +181,46 @@ mod tests {
                 .map(|s| s.parse().unwrap())
                 .collect(),
         );
-        let (next, info) = board.compute_next_word_info();
+        let next = board.next();
         assert_eq!(next, "afkpz".parse().unwrap());
-        assert_eq!(info, 2f64);
+    }
+}
+
+#[cfg(test)]
+mod bench {
+    use super::*;
+    use crate::enums::Word;
+    use crate::tactics::solver::Solver;
+    use crate::CANDITATES;
+    #[test]
+    #[ignore]
+    fn get_maximum() {
+        let mut board = Board::reset();
+        <Board as ReplFunctions>::next(&mut board);
+    }
+    #[test]
+    #[ignore]
+    fn get_avg_count() {
+        let all_answers = CANDITATES.get_canditates();
+        let mut average_count = 0;
+        all_answers.iter().for_each(|answer| {
+            let mut board = Board::reset();
+            let first_word: Word = "soare".parse().unwrap();
+            let first_status = Word::to_status(&first_word, answer);
+            board.filter(&first_word, &first_status);
+            average_count += 1;
+            loop {
+                if board.remaining_canditates.len() == 1 && board.remaining_canditates[0] == *answer
+                {
+                    break;
+                }
+                let next_word = <Board as ReplFunctions>::next(&mut board);
+                let status = Word::to_status(&next_word, answer);
+                board.filter(&next_word, &status);
+                average_count += 1;
+            }
+        });
+        let average_count = average_count as f64 / all_answers.len() as f64;
+        println!("average count: {}", average_count);
     }
 }
