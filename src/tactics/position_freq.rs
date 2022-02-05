@@ -92,7 +92,8 @@ impl Solver for Board {
                             as f64
                     })
                     .reduce(|prev, current| prev * current / remaining_canditates.len() as f64)
-                    .unwrap_or(0.0);
+                    .unwrap_or(0.0)
+                    / remaining_canditates.len() as f64;
                 // yellowの確率
                 let probablity_yellow = 1f64 - probablity_green - probablity_gray;
                 info += vec![probablity_green, probablity_gray, probablity_yellow]
@@ -110,7 +111,7 @@ impl Solver for Board {
 
         let end = start.elapsed();
         println!("quasi info: {:?}", current_max_info);
-        println!("next: {:?}", current_max_word);
+        println!("next: {:?}", current_max_word.to_string());
         println!("next time: {:?}", end);
 
         current_max_word
@@ -129,13 +130,14 @@ mod tests {
     #[test]
     #[ignore]
     fn freq_get_maximum() {
-        let mut board = Board::reset();
-        <Board as ReplFunctions>::next(&mut board);
+        let board = Board::new(CANDITATES.get_canditates(), CANDITATES.get_all_words());
+        let word = board.next();
+        println!("best first: {}", word.to_string());
     }
     #[test]
     #[ignore]
     fn freq_get_avg_count() {
-        let best_first = "soare";
+        let best_first = "raree";
         let all_answers = CANDITATES.get_canditates();
         let mut average_count = 0;
         all_answers.iter().for_each(|answer| {
