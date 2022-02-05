@@ -1,2 +1,2 @@
 mod bridge;
-mod interface;
+pub mod interface;

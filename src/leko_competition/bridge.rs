@@ -4,6 +4,8 @@ use crate::{
     tactics::solver::Solver,
 };
 
+use super::interface::LekoRepl;
+
 impl From<Response> for StatusChar {
     fn from(response: Response) -> Self {
         match response {
@@ -47,3 +49,5 @@ impl<S: Solver> Guesser for S {
         self.next().to_string()
     }
 }
+
+impl<S: Solver> LekoRepl for S {}
