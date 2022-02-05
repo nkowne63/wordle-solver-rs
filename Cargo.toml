@@ -1,7 +1,6 @@
 [package]
 name = "nkowne63-wordle-solver-rs-01"
 description = "wordle solver by the nkowne63"
-licence = "MIT"
 version = "0.1.0"
 edition = "2021"
 
