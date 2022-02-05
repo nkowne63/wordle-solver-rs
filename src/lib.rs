@@ -1,14 +1,14 @@
-mod board;
 pub mod commands;
 mod enums;
+mod tactics;
 mod words;
 
 use std::time::Instant;
 
-use board::Board;
 use commands::{ReplCommandHandlers, ReplFunctions};
 use enums::{Status, Word};
 use once_cell::sync::Lazy;
+use tactics::avg_info_max::Board;
 use words::Canditates;
 
 static CANDITATES: Lazy<Canditates> = Lazy::new(|| Canditates {});

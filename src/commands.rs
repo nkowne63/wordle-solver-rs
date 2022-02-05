@@ -1,6 +1,6 @@
 use crate::{
-    board::Board,
     enums::{Status, Word},
+    tactics::avg_info_max::Board,
 };
 use repl_rs::{Command, Convert, Error as ReplError, Parameter, Repl, Value};
 use std::collections::HashMap;
