@@ -8,34 +8,22 @@ struct WordPair(Word, Word);
 struct WordStatusPair(Word, Status);
 
 pub struct Board {
-    status_board: HashMap<WordPair, Status>,
     pub remaining_canditates: Vec<Word>,
     input_canditates: Vec<Word>,
-    word_color_grouping: HashMap<WordStatusPair, u32>,
-    word_avg_info: HashMap<Word, f64>,
 }
 
 impl Board {
     pub fn new(canditates: Vec<Word>, inputs: Vec<Word>) -> Board {
-        let status_board = HashMap::new();
-        let word_color_grouping = HashMap::new();
-        let word_avg_info = HashMap::new();
         Board {
-            status_board,
             remaining_canditates: canditates,
             input_canditates: inputs,
-            word_color_grouping,
-            word_avg_info,
         }
     }
     pub fn filter(&mut self, word: &Word, status: &Status) {
         let start = Instant::now();
         let &mut Board {
-            status_board: _,
             ref mut remaining_canditates,
             input_canditates: _,
-            word_color_grouping: _,
-            word_avg_info: _,
         } = self;
         let before_len = remaining_canditates.len();
         let remaining: Vec<Word> = remaining_canditates
@@ -69,16 +57,14 @@ impl Board {
         );
         println!("filter time: {:?}", end);
     }
-    pub fn compute_next_word_info(&mut self) -> (Word, f64) {
+    pub fn compute_next_word_info(&self) -> (Word, f64) {
         let start = Instant::now();
-        let &mut Board {
-            ref mut remaining_canditates,
-            ref mut input_canditates,
-            ref mut status_board,
-            word_color_grouping: _,
-            word_avg_info: _,
+        let &Board {
+            ref remaining_canditates,
+            ref input_canditates,
         } = self;
-        *status_board = HashMap::new();
+        // construct board
+        let mut status_board = HashMap::new();
         let input_len = input_canditates.len() as u32;
         let mut current = 0f64;
         input_canditates
@@ -101,19 +87,13 @@ impl Board {
             });
         let end = start.elapsed();
         println!("board time: {:?}", end);
+        // construct color groping and word_avg_info
         let start = Instant::now();
-        let &mut Board {
-            ref mut remaining_canditates,
-            ref mut input_canditates,
-            ref mut status_board,
-            ref mut word_color_grouping,
-            ref mut word_avg_info,
-        } = self;
         let len_of_remaining_canditates = remaining_canditates.len() as u32;
         let input_len = input_canditates.len() as u32;
         let mut current = 0f64;
-        word_color_grouping.clear();
-        word_avg_info.clear();
+        let mut word_color_grouping = HashMap::new();
+        let mut word_avg_info = HashMap::new();
         input_canditates
             .iter()
             .enumerate()
@@ -149,14 +129,8 @@ impl Board {
             });
         let end = start.elapsed();
         println!("info time: {:?}", end);
+        // search next word
         let start = Instant::now();
-        let &mut Board {
-            remaining_canditates: _,
-            input_canditates: _,
-            status_board: _,
-            word_color_grouping: _,
-            ref word_avg_info,
-        } = self;
         let (word, info) = word_avg_info
             .iter()
             .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
@@ -189,7 +163,7 @@ mod tests {
     }
     #[test]
     fn info() {
-        let mut board = Board::new(
+        let board = Board::new(
             vec!["abcde", "fghij", "klmno", "pqrst"]
                 .iter()
                 .map(|s| s.parse().unwrap())
