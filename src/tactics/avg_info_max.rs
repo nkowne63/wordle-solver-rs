@@ -10,7 +10,7 @@ struct WordPair(Word, Word);
 struct WordStatusPair(Word, Status);
 
 pub struct Board {
-    pub remaining_canditates: Vec<Word>,
+    remaining_canditates: Vec<Word>,
     input_canditates: Vec<Word>,
 }
 
