@@ -16,12 +16,13 @@ pub struct History {
 }
 
 pub trait Guesser {
-    fn guess(&self, history: &Vec<History>) -> String;
+    #[allow(clippy::ptr_arg)]
+    fn guess(&mut self, history: &Vec<History>) -> String;
 }
 
 pub trait LekoRepl: Guesser {
     #[allow(clippy::single_char_pattern)]
-    fn run_repl(&self) {
+    fn run_repl(&mut self) {
         let mut history: Vec<History> = Vec::new();
         let mut word = self.guess(&history);
         println!("{}", word);
