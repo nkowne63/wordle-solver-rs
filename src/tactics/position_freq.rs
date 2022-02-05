@@ -1,4 +1,4 @@
-use itertools::iproduct;
+use itertools::{iproduct, Itertools};
 
 use crate::commands::{ReplCommandHandlers, ReplFunctions};
 use crate::enums::{Alphabet, Status, Word};
@@ -32,28 +32,28 @@ impl Solver for Board {
         let after_len = remaining.len();
         *remaining_canditates = remaining;
         let end = start.elapsed();
-        if remaining_canditates.len() > 2 {
-            println!(
-                "first three: {}, {}, {}",
-                remaining_canditates[0].to_string(),
-                remaining_canditates[1].to_string(),
-                remaining_canditates[2].to_string()
-            );
-        } else {
-            println!(
-                "remaining: {:?}",
-                remaining_canditates
-                    .iter()
-                    .map(|w| w.to_string())
-                    .collect::<Vec<String>>()
-            );
-        }
-        println!("filter: {} -> {}", before_len, after_len);
-        println!(
-            "gained information: {}",
-            (before_len as f64 / after_len as f64).log2()
-        );
-        println!("filter time: {:?}", end);
+        // if remaining_canditates.len() > 2 {
+        //     println!(
+        //         "first three: {}, {}, {}",
+        //         remaining_canditates[0].to_string(),
+        //         remaining_canditates[1].to_string(),
+        //         remaining_canditates[2].to_string()
+        //     );
+        // } else {
+        //     println!(
+        //         "remaining: {:?}",
+        //         remaining_canditates
+        //             .iter()
+        //             .map(|w| w.to_string())
+        //             .collect::<Vec<String>>()
+        //     );
+        // }
+        // println!("filter: {} -> {}", before_len, after_len);
+        // println!(
+        //     "gained information: {}",
+        //     (before_len as f64 / after_len as f64).log2()
+        // );
+        // println!("filter time: {:?}", end);
     }
     fn next(&self) -> Word {
         let start = Instant::now();
@@ -96,6 +96,11 @@ impl Solver for Board {
                     / remaining_canditates.len() as f64;
                 // yellowの確率
                 let probablity_yellow = 1f64 - probablity_green - probablity_gray;
+                // 情報量の加算
+                // しかし、同じ文字がすでに加算されていたら加算しない（ペナルティー）
+                if word.0.iter().find_position(|a| a == &alphabet).unwrap().0 != index {
+                    return;
+                }
                 info += vec![probablity_green, probablity_gray, probablity_yellow]
                     .iter()
                     .filter(|&&p| p != 0.0)
@@ -110,9 +115,9 @@ impl Solver for Board {
         });
 
         let end = start.elapsed();
-        println!("quasi info: {:?}", current_max_info);
-        println!("next: {:?}", current_max_word.to_string());
-        println!("next time: {:?}", end);
+        // println!("quasi info: {:?}", current_max_info);
+        // println!("next: {:?}", current_max_word.to_string());
+        // println!("next time: {:?}", end);
 
         current_max_word
     }
@@ -137,10 +142,12 @@ mod tests {
     #[test]
     #[ignore]
     fn freq_get_avg_count() {
-        let best_first = "raree";
+        let best_first = "soare";
         let all_answers = CANDITATES.get_canditates();
         let mut average_count = 0;
-        all_answers.iter().for_each(|answer| {
+        let answer_len = all_answers.len();
+        let mut current = 0f64;
+        all_answers.iter().enumerate().for_each(|(a_idx, answer)| {
             let mut board = Board::reset();
             let first_word: Word = best_first.parse().unwrap();
             let first_status = Word::to_status(&first_word, answer);
@@ -156,6 +163,12 @@ mod tests {
                 let status = Word::to_status(&next_word, answer);
                 board.filter(&next_word, &status);
                 average_count += 1;
+            }
+            let percentage = (a_idx as f64 / answer_len as f64) * 100.0;
+            let percentage = ((percentage / 5.0).floor() as i64 * 5) as f64;
+            if percentage >= (current + 5.0) {
+                current = (current + 5.0).max(percentage);
+                println!("board percentage {}%", current);
             }
         });
         let average_count = average_count as f64 / all_answers.len() as f64;
