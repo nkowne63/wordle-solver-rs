@@ -10,7 +10,7 @@ struct WordPair(Word, Word);
 struct WordStatusPair(Word, Status);
 
 pub struct Board {
-    remaining_canditates: Vec<Word>,
+    pub remaining_canditates: Vec<Word>,
     input_canditates: Vec<Word>,
 }
 
@@ -201,17 +201,19 @@ mod bench {
     #[test]
     #[ignore]
     fn get_avg_count() {
+        let best_first = "soare";
         let all_answers = CANDITATES.get_canditates();
         let mut average_count = 0;
         all_answers.iter().for_each(|answer| {
             let mut board = Board::reset();
-            let first_word: Word = "soare".parse().unwrap();
+            let first_word: Word = best_first.parse().unwrap();
             let first_status = Word::to_status(&first_word, answer);
             board.filter(&first_word, &first_status);
             average_count += 1;
             loop {
                 if board.remaining_canditates.len() == 1 && board.remaining_canditates[0] == *answer
                 {
+                    average_count += 1;
                     break;
                 }
                 let next_word = <Board as ReplFunctions>::next(&mut board);
