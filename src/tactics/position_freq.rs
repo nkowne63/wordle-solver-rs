@@ -3,6 +3,7 @@ use itertools::{iproduct, Itertools};
 use crate::commands::{ReplCommandHandlers, ReplFunctions};
 use crate::enums::{Alphabet, Status, Word};
 use crate::tactics::solver::Solver;
+use crate::SHOW_CONSOLE;
 use std::{collections::HashMap, time::Instant};
 
 pub struct Board {
@@ -32,28 +33,31 @@ impl Solver for Board {
         let after_len = remaining.len();
         *remaining_canditates = remaining;
         let end = start.elapsed();
-        // if remaining_canditates.len() > 2 {
-        //     println!(
-        //         "first three: {}, {}, {}",
-        //         remaining_canditates[0].to_string(),
-        //         remaining_canditates[1].to_string(),
-        //         remaining_canditates[2].to_string()
-        //     );
-        // } else {
-        //     println!(
-        //         "remaining: {:?}",
-        //         remaining_canditates
-        //             .iter()
-        //             .map(|w| w.to_string())
-        //             .collect::<Vec<String>>()
-        //     );
-        // }
-        // println!("filter: {} -> {}", before_len, after_len);
-        // println!(
-        //     "gained information: {}",
-        //     (before_len as f64 / after_len as f64).log2()
-        // );
-        // println!("filter time: {:?}", end);
+        let show_console = *SHOW_CONSOLE.lock().unwrap();
+        if show_console {
+            if remaining_canditates.len() > 2 {
+                println!(
+                    "first three: {}, {}, {}",
+                    remaining_canditates[0].to_string(),
+                    remaining_canditates[1].to_string(),
+                    remaining_canditates[2].to_string()
+                );
+            } else {
+                println!(
+                    "remaining: {:?}",
+                    remaining_canditates
+                        .iter()
+                        .map(|w| w.to_string())
+                        .collect::<Vec<String>>()
+                );
+            }
+            println!("filter: {} -> {}", before_len, after_len);
+            println!(
+                "gained information: {}",
+                (before_len as f64 / after_len as f64).log2()
+            );
+            println!("filter time: {:?}", end);
+        }
     }
     fn next(&self) -> Word {
         let start = Instant::now();
@@ -115,9 +119,12 @@ impl Solver for Board {
         });
 
         let end = start.elapsed();
-        // println!("quasi info: {:?}", current_max_info);
-        // println!("next: {:?}", current_max_word.to_string());
-        // println!("next time: {:?}", end);
+        let show_console = *SHOW_CONSOLE.lock().unwrap();
+        if show_console {
+            println!("quasi info: {:?}", current_max_info);
+            println!("next: {:?}", current_max_word.to_string());
+            println!("next time: {:?}", end);
+        }
 
         current_max_word
     }
