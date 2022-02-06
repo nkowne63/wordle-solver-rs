@@ -230,7 +230,7 @@ dependencies = [
 
 [[package]]
 name = "nkowne63-wordle-solver-rs-01"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "itertools",
  "once_cell",
