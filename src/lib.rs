@@ -1,3 +1,4 @@
+#[cfg(feature = "local")]
 mod commands;
 mod enums;
 mod leko_competition;

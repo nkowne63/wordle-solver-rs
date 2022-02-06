@@ -66,7 +66,7 @@ pub trait ReplCommandHandlers: ReplFunctions {
         };
         Repl::new(ctx)
             .with_name("wordle-solver")
-            .with_version("v0.0.1")
+            .with_version("v0.1.1")
             .with_description("Wordle solver")
             .add_command(reset_command)
             .add_command(next_command)

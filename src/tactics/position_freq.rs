@@ -1,6 +1,5 @@
 use itertools::{iproduct, Itertools};
 
-use crate::commands::{ReplCommandHandlers, ReplFunctions};
 use crate::enums::{Alphabet, Status, Word};
 use crate::get_show_console;
 use crate::tactics::solver::Solver;
@@ -128,9 +127,6 @@ impl Solver for Board {
     }
 }
 
-impl ReplFunctions for Board {}
-impl ReplCommandHandlers for Board {}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -153,7 +149,7 @@ mod tests {
         let answer_len = all_answers.len();
         let mut current = 0f64;
         all_answers.iter().enumerate().for_each(|(a_idx, answer)| {
-            let mut board = Board::reset();
+            let mut board = Board::new(CANDITATES.get_canditates(), CANDITATES.get_all_words());
             let first_word: Word = best_first.parse().unwrap();
             let first_status = Word::to_status(&first_word, answer);
             board.filter(&first_word, &first_status);
@@ -164,7 +160,7 @@ mod tests {
                     average_count += 1;
                     break;
                 }
-                let next_word = <Board as ReplFunctions>::next(&mut board);
+                let next_word = board.next();
                 let status = Word::to_status(&next_word, answer);
                 board.filter(&next_word, &status);
                 average_count += 1;
