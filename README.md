@@ -4,6 +4,8 @@ Rust製のwordle solverのCLIです。
 起動するとCLIが立ち上がり、コマンドを使って絞り込みを行えるようになります。終了はCtrl+Dです。
 基本的な戦略は平均情報量を力押しで計算しているだけです。
 
+動かし方は、`cargo run --bin local-solver --release --features="local"`です。
+
 ## コマンド一覧
 
 - reset
