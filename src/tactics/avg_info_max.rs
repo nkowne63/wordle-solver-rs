@@ -210,7 +210,7 @@ mod bench {
     #[test]
     #[ignore]
     fn get_maximum() {
-        let mut board = Board::new(CANDITATES.get_canditates(), CANDITATES.get_all_words());
+        let board = Board::new(CANDITATES.get_canditates(), CANDITATES.get_all_words());
         board.next();
     }
     #[test]
