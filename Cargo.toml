@@ -2,7 +2,7 @@
 name = "nkowne63-wordle-solver-rs-01"
 license = "MIT"
 description = "wordle solver by the nkowne63"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2021"
 
 [dependencies]

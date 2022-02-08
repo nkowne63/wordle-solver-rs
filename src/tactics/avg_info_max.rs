@@ -62,7 +62,7 @@ impl Solver for Board {
         }
     }
     fn next(&self) -> Word {
-        if self.remaining_canditates.len() == 1 {
+        if self.remaining_canditates.len() <= 2 {
             return self.remaining_canditates[0];
         }
         let all_start = Instant::now();
