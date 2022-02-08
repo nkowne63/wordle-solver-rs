@@ -151,12 +151,14 @@ mod tests {
         let mut average_count = 0;
         let answer_len = all_answers.len();
         let mut current = 0f64;
+        let mut count_dist = HashMap::new();
         all_answers.iter().enumerate().for_each(|(a_idx, answer)| {
             let mut board = Board::new(CANDITATES.get_canditates(), CANDITATES.get_all_words());
             let first_word: Word = best_first.parse().unwrap();
             let first_status = Word::to_status(&first_word, answer);
             board.filter(&first_word, &first_status);
             average_count += 1;
+            let mut current_count = 1;
             loop {
                 if board.remaining_canditates.len() == 1 && board.remaining_canditates[0] == *answer
                 {
@@ -167,6 +169,7 @@ mod tests {
                 let status = Word::to_status(&next_word, answer);
                 board.filter(&next_word, &status);
                 average_count += 1;
+                current_count += 1;
             }
             let percentage = (a_idx as f64 / answer_len as f64) * 100.0;
             let percentage = ((percentage / 5.0).floor() as i64 * 5) as f64;
@@ -174,8 +177,14 @@ mod tests {
                 current = (current + 5.0).max(percentage);
                 println!("board percentage {}%", current);
             }
+            if let Some(value) = count_dist.get_mut(&current_count) {
+                *value += 1;
+            } else {
+                count_dist.insert(current_count, 1);
+            }
         });
         let average_count = average_count as f64 / all_answers.len() as f64;
         println!("average count: {}", average_count);
+        println!("count distribution: {:?}", count_dist);
     }
 }
